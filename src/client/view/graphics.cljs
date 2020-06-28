@@ -15,10 +15,7 @@
 
 (defn load-graphics []
   (println "fetching images")
-  (swap! graphics #(-> % (assoc :tile [(fetch-img "tile_0")
-                                       (fetch-img "tile_1")
-                                       (fetch-img "tile_2")
-                                       (fetch-img "tile_3")])
+  (swap! graphics #(-> % (assoc :tile (fetch-img "tile"))
                        (assoc :player_1 (fetch-img "player_1"))
                        (assoc :player_2 (fetch-img "player_2"))
                        (assoc :water (fetch-img "water"))
@@ -26,15 +23,12 @@
                        (assoc :logo (fetch-img "clojure")))))
 
 (defn tiles-loaded? []
-  (and (= 4 (count (:tile @graphics)))
+  (and
        (not (zero? (.-width (:cursor @graphics))))
        (not (zero? (.-width (:player_1 @graphics))))
        (not (zero? (.-width (:player_2 @graphics))))
-       (not (zero? (.-width (:water @graphics))))
-       (not (zero? (.-width (get-in @graphics [:tile 0]))))
-       (not (zero? (.-width (get-in @graphics [:tile 1]))))
-       (not (zero? (.-width (get-in @graphics [:tile 2]))))
-       (not (zero? (.-width (get-in @graphics [:tile 3]))))))
+       (not (zero? (.-width (:tile @graphics))))
+       (not (zero? (.-width (:water @graphics))))))
 
 (defn draw-tile
   ([img [x y] rot]

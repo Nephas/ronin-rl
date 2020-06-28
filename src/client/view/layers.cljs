@@ -13,18 +13,18 @@
                      (q/color-mode :hsb 1.0))
     (swap! layers assoc layer gr))))
 
-(defn angle [facing]
-  (get {:up 0 :down q/PI :left (* 3 q/HALF-PI) :right q/HALF-PI} facing))
+(def ANGLES {:up 0 :down q/PI :left (* 3 q/HALF-PI) :right q/HALF-PI})
 
 (defn draw-floor-tile [pos]
-  (let [i (mod (hash pos) 4)]
-    (draw-tile (get-in @graphics [:tile i]) pos)))
+  (let [i (mod (hash pos) 4)
+        angle (nth (vals ANGLES) i)]
+    (draw-tile (:tile @graphics) pos angle)))
 
 (defn draw-entity [state id]
   (let [graphics-key (get-in state [:drawable id])
         facing (get-in state [:facing id])
         pos (get-in state [:positions id])]
-    (draw-tile (get @graphics graphics-key) pos (angle facing))))
+    (draw-tile (get @graphics graphics-key) pos (get ANGLES facing))))
 
 (defn render-floor! [state]
   (println "prerendering game board")
