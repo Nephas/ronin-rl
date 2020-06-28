@@ -22,7 +22,7 @@
 (defn handle-move [state event]
   (let [screenpos [(:x event) (:y event)]
         pos (mapv #(int (/ % TILESIZE)) screenpos)]
-    (do (println state) (assoc state :hovered pos))))
+    (assoc state :hovered pos)))
 
 (defn handle-key [state event]
   (let [key (:key event)]

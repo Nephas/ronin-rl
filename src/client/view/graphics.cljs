@@ -3,9 +3,10 @@
             [client.routing :as r]))
 
 (def SCREENSIZE 600)
-(def TILESIZE (/ SCREENSIZE 11.0))
+(def SCREENCENTER (* 0.5 SCREENSIZE))
+(def TILESIZE (/ SCREENSIZE 10.0))
 (def TILES (apply concat (map (fn [x] (map (fn [y] [x y])
-                                           (range 11))) (range 11))))
+                                           (range 10))) (range 10))))
 
 (def graphics (atom {}))
 
@@ -20,6 +21,7 @@
                                        (fetch-img "tile_3")])
                        (assoc :player_1 (fetch-img "player_1"))
                        (assoc :player_2 (fetch-img "player_2"))
+                       (assoc :water (fetch-img "water"))
                        (assoc :cursor (fetch-img "cursor"))
                        (assoc :logo (fetch-img "clojure")))))
 
@@ -28,6 +30,7 @@
        (not (zero? (.-width (:cursor @graphics))))
        (not (zero? (.-width (:player_1 @graphics))))
        (not (zero? (.-width (:player_2 @graphics))))
+       (not (zero? (.-width (:water @graphics))))
        (not (zero? (.-width (get-in @graphics [:tile 0]))))
        (not (zero? (.-width (get-in @graphics [:tile 1]))))
        (not (zero? (.-width (get-in @graphics [:tile 2]))))

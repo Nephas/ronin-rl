@@ -1,29 +1,18 @@
 (ns server.reducer.reduce
-  (:require [clojure.set :refer [map-invert]]))
+  (:require [server.reducer.move :refer [move-entity turn-entity move]]
+            [server.reducer.validate :refer [validate]]))
 
-(def turn-directions {0 :up
-                      1 :right
-                      2 :down
-                      3 :left})
 
-(defn turn [facing dir]
-  (let [current (facing (map-invert turn-directions))]
-    (cond (= :left dir) (get turn-directions (mod (dec current) 4))
-          (= :right dir) (get turn-directions (mod (inc current) 4)))))
-
-(defn move [[x y] dir]
-  (cond (= :up dir) [x (dec y)]
-        (= :down dir) [x (inc y)]
-        (= :left dir) [(dec x) y]
-        (= :right dir) [(inc x) y]))
-
-(defn move-entity [state id dir]
-  (update-in state [:positions id] move dir))
-
-(defn turn-entity [state id dir]
-  (update-in state [:facing id] turn dir))
-
-(defn reduce [state action pid]
+(defn execute [state action pid]
   (let [[primary secondary] action]
     (cond (= :move primary) (move-entity state pid secondary)
           (= :turn primary) (turn-entity state pid secondary))))
+
+(defn reduce [state action pid]
+  (if (validate state action pid)
+    (do (println "\t * accepted action")
+        (-> state
+            (execute action pid)
+            (update :tic inc)))
+    (do (println "\t * rejected action")
+        state)))
