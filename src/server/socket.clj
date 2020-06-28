@@ -23,5 +23,4 @@
         (str/includes? msg "action")
         (let [action (read-string (last (str/split msg #"action")))]
           (do (swap! s/store update gid r/reduce action pid)
-              ;action reducer goes here
               (broadcast-at gid (s/serialize-game gid))))))
