@@ -1,0 +1,23 @@
+@font-face {
+    font-family: 'arigato'; /*a name to be used later*/
+    src: url('/font/arigato.ttf'); /*URL to font*/
+}
+
+body {
+  background-color: lightgray;
+  font-family: 'arigato', helvetica, sans-serif;
+  color: darkred;
+  text-align: center;
+    font-size: 14pt;
+}
+
+.container{
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+
+#canvas-container {
+    margin: 20px;
+    text-align: center;
+}
