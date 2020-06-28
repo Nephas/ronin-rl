@@ -6,12 +6,12 @@
 (def layers (atom {}))
 
 (defn init-layers []
-  (doseq [layer [:floor :entities]]
+  (doseq [layer [:floor :entities :gui]]
     (let [gr (q/create-graphics SCREENSIZE SCREENSIZE)]
-    (q/with-graphics gr
-                     (q/image-mode :center)
-                     (q/color-mode :hsb 1.0))
-    (swap! layers assoc layer gr))))
+      (q/with-graphics gr
+                       (q/image-mode :center)
+                       (q/color-mode :hsb 1.0))
+      (swap! layers assoc layer gr))))
 
 (def ANGLES {:up 0 :down q/PI :left (* 3 q/HALF-PI) :right q/HALF-PI})
 
@@ -39,12 +39,28 @@
                    (doseq [id (:entities state)]
                      (draw-entity state id))))
 
+(defn player-info [state pid [x y]]
+  (let [[health max-health] (get-in state [:health pid])
+        [actions max-actions] (get-in state [:actions pid])]
+    (q/text (str "player " pid "\n"
+                 " - health: " health "/" max-health "\n"
+                 " - actions: " actions "/" max-actions) x y)))
+
+(defn render-gui! [state]
+  (println "prerendering entities")
+  (q/with-graphics (:gui @layers)
+                   (q/text-size 18)
+                   (q/background 0.0 0.0)
+                   (player-info state 1 [10 30])
+                   (player-info state 2 [10 120])))
+
 (defn update [state]
   (let [new-state @remote-state]
     (if (and (some? new-state) (tiles-loaded?))
       (do (reset! remote-state nil)
           (render-floor! new-state)
           (render-entities! new-state)
+          (render-gui! new-state)
           (assoc state :game new-state))
       state)))
 
@@ -52,6 +68,7 @@
   (when (and (some? (:floor @layers)) (some? (:entities @layers)))
     (q/image (:floor @layers) SCREENCENTER SCREENCENTER SCREENSIZE SCREENSIZE)
     (q/image (:entities @layers) SCREENCENTER SCREENCENTER SCREENSIZE SCREENSIZE)
+    (q/image (:gui @layers) SCREENCENTER SCREENCENTER SCREENSIZE SCREENSIZE)
     (let [highlight (:hovered state)]
       (when (some? highlight)
         (draw-tile (:cursor @graphics) highlight)))))

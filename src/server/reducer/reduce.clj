@@ -2,6 +2,8 @@
   (:require [server.reducer.move :refer [move-entity turn-entity move]]
             [server.reducer.validate :refer [validate]]))
 
+(defn pay [state pid]
+  (update-in state [:actions pid 0] dec))
 
 (defn execute [state action pid]
   (let [[primary secondary] action]
@@ -13,6 +15,7 @@
     (do (println "\t * accepted action")
         (-> state
             (execute action pid)
+            (pay pid)
             (update :tic inc)))
     (do (println "\t * rejected action")
         state)))

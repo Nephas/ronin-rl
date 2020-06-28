@@ -8,6 +8,8 @@
 (defn initialize-game [id]
   (swap! store assoc id {:tic       0
                          :entities  (list 1 2 10 11 12 13)
+                         :health    {1 [3 3] 2 [3 3]}
+                         :actions   {1 [3 5] 2 [3 5]}
                          :drawable  {1  :player_1
                                      2  :player_2
                                      10 :water

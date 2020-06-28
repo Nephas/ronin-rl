@@ -16,7 +16,10 @@
               :w [:move :up]
               :a [:move :left]
               :s [:move :down]
-              :d [:move :right]})
+              :d [:move :right]
+
+              :t [:pass nil]
+              :c [:attack nil]})
 
 
 (defn handle-move [state event]
