@@ -1,74 +1,42 @@
 (ns client.view.layers
   (:require [quil.core :as q]
             [client.connect :refer [remote-state]]
-            [client.view.graphics :refer [TILES SCREENSIZE SCREENCENTER graphics draw-tile tiles-loaded?]]))
+            [client.view.layer.floor :refer [render-floor!]]
+            [client.view.layer.entity :refer [render-entities!]]
+            [client.view.layer.gui :refer [render-gui!]]
+            [client.view.layer.highlight :refer [render-highlights!]]
+            [client.view.graphics :refer [TILES SCREENSIZE SCREENCENTER ANGLES graphics draw-tile tiles-loaded?]]))
+
+(def LAYERS [:floor :entities :gui :highlight])
 
 (def layers (atom {}))
 
 (defn init-layers []
-  (doseq [layer [:floor :entities :gui]]
+  (doseq [layer LAYERS]
     (let [gr (q/create-graphics SCREENSIZE SCREENSIZE)]
       (q/with-graphics gr
                        (q/image-mode :center)
                        (q/color-mode :hsb 1.0))
       (swap! layers assoc layer gr))))
 
-(def ANGLES {:up 0 :down q/PI :left (* 3 q/HALF-PI) :right q/HALF-PI})
-
-(defn draw-floor-tile [pos]
-  (let [i (mod (hash pos) 4)
-        angle (nth (vals ANGLES) i)]
-    (draw-tile (:tile @graphics) pos angle)))
-
-(defn draw-entity [state id]
-  (let [graphics-key (get-in state [:drawable id])
-        facing (get-in state [:facing id])
-        pos (get-in state [:positions id])]
-    (draw-tile (get @graphics graphics-key) pos (get ANGLES facing))))
-
-(defn render-floor! [state]
-  (println "prerendering game board")
-  (q/with-graphics (:floor @layers)
-                   (doseq [pos TILES]
-                     (draw-floor-tile pos))))
-
-(defn render-entities! [state]
-  (println "prerendering entities")
-  (q/with-graphics (:entities @layers)
-                   (q/background 0.0 0.0)
-                   (doseq [id (:entities state)]
-                     (draw-entity state id))))
-
-(defn player-info [state pid [x y]]
-  (let [[health max-health] (get-in state [:health pid])
-        [actions max-actions] (get-in state [:actions pid])]
-    (q/text (str "player " pid "\n"
-                 " - health: " health "/" max-health "\n"
-                 " - actions: " actions "/" max-actions) x y)))
-
-(defn render-gui! [state]
-  (println "prerendering entities")
-  (q/with-graphics (:gui @layers)
-                   (q/text-size 18)
-                   (q/background 0.0 0.0)
-                   (player-info state 1 [10 30])
-                   (player-info state 2 [10 120])))
-
 (defn update [state]
   (let [new-state @remote-state]
     (if (and (some? new-state) (tiles-loaded?))
       (do (reset! remote-state nil)
-          (render-floor! new-state)
-          (render-entities! new-state)
-          (render-gui! new-state)
+          (render-floor! new-state (:floor @layers))
+          (render-entities! new-state (:entities @layers))
+          (render-highlights! new-state (:highlight @layers))
+          (render-gui! new-state (:gui @layers))
           (assoc state :game new-state))
       state)))
 
+(defn render-layer [layer]
+  (q/image (get @layers layer) SCREENCENTER SCREENCENTER SCREENSIZE SCREENSIZE))
+
 (defn render [state]
   (when (and (some? (:floor @layers)) (some? (:entities @layers)))
-    (q/image (:floor @layers) SCREENCENTER SCREENCENTER SCREENSIZE SCREENSIZE)
-    (q/image (:entities @layers) SCREENCENTER SCREENCENTER SCREENSIZE SCREENSIZE)
-    (q/image (:gui @layers) SCREENCENTER SCREENCENTER SCREENSIZE SCREENSIZE)
+    (doseq [layer LAYERS]
+      (render-layer layer))
     (let [highlight (:hovered state)]
       (when (some? highlight)
         (draw-tile (:cursor @graphics) highlight)))))

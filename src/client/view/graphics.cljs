@@ -8,6 +8,8 @@
 (def TILES (apply concat (map (fn [x] (map (fn [y] [x y])
                                            (range 10))) (range 10))))
 
+(def ANGLES {:up 0 :down q/PI :left (* 3 q/HALF-PI) :right q/HALF-PI})
+
 (def graphics (atom {}))
 
 (defn fetch-img [id]
@@ -18,6 +20,10 @@
   (swap! graphics #(-> % (assoc :tile (fetch-img "tile"))
                        (assoc :player_1 (fetch-img "player_1"))
                        (assoc :player_2 (fetch-img "player_2"))
+                       (assoc :kata_0 (fetch-img "kata_0"))
+                       (assoc :kata_1 (fetch-img "kata_1"))
+                       (assoc :kata_2 (fetch-img "kata_2"))
+                       (assoc :kata_3 (fetch-img "kata_3"))
                        (assoc :water (fetch-img "water"))
                        (assoc :cursor (fetch-img "cursor"))
                        (assoc :logo (fetch-img "clojure")))))
@@ -27,6 +33,10 @@
        (not (zero? (.-width (:cursor @graphics))))
        (not (zero? (.-width (:player_1 @graphics))))
        (not (zero? (.-width (:player_2 @graphics))))
+       (not (zero? (.-width (:kata_0 @graphics))))
+       (not (zero? (.-width (:kata_1 @graphics))))
+       (not (zero? (.-width (:kata_2 @graphics))))
+       (not (zero? (.-width (:kata_3 @graphics))))
        (not (zero? (.-width (:tile @graphics))))
        (not (zero? (.-width (:water @graphics))))))
 
