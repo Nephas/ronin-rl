@@ -1,12 +1,12 @@
 (ns client.view.graphics
   (:require [quil.core :as q]
-            [client.routing :as r]))
+            [client.routing :as r]
+            [lib.map :refer [TILES]]))
 
-(def SCREENSIZE 600)
+(def SCREENSIZE 500)
 (def SCREENCENTER (* 0.5 SCREENSIZE))
 (def TILESIZE (/ SCREENSIZE 10.0))
-(def TILES (apply concat (map (fn [x] (map (fn [y] [x y])
-                                           (range 10))) (range 10))))
+
 
 (def ANGLES {:up 0 :down q/PI :left (* 3 q/HALF-PI) :right q/HALF-PI})
 
@@ -15,30 +15,23 @@
 (defn fetch-img [id]
   (q/request-image (str r/origin "/img/" id ".png")))
 
+
+
 (defn load-graphics []
   (println "fetching images")
-  (swap! graphics #(-> % (assoc :tile (fetch-img "tile"))
-                       (assoc :player_1 (fetch-img "player_1"))
-                       (assoc :player_2 (fetch-img "player_2"))
-                       (assoc :kata_0 (fetch-img "kata_0"))
-                       (assoc :kata_1 (fetch-img "kata_1"))
-                       (assoc :kata_2 (fetch-img "kata_2"))
-                       (assoc :kata_3 (fetch-img "kata_3"))
-                       (assoc :water (fetch-img "water"))
-                       (assoc :cursor (fetch-img "cursor"))
-                       (assoc :logo (fetch-img "clojure")))))
+  (reset! graphics {:tile     (fetch-img "tile")
+                    :player_1 (fetch-img "player_1")
+                    :player_2 (fetch-img "player_2")
+                    :katana (fetch-img "katana")
+                    :kata_0   (fetch-img "kata_0")
+                    :kata_1   (fetch-img "kata_1")
+                    :water    (fetch-img "water")
+                    :cursor   (fetch-img "cursor")
+                    :logo     (fetch-img "clojure")}))
 
 (defn tiles-loaded? []
-  (and
-       (not (zero? (.-width (:cursor @graphics))))
-       (not (zero? (.-width (:player_1 @graphics))))
-       (not (zero? (.-width (:player_2 @graphics))))
-       (not (zero? (.-width (:kata_0 @graphics))))
-       (not (zero? (.-width (:kata_1 @graphics))))
-       (not (zero? (.-width (:kata_2 @graphics))))
-       (not (zero? (.-width (:kata_3 @graphics))))
-       (not (zero? (.-width (:tile @graphics))))
-       (not (zero? (.-width (:water @graphics))))))
+  (let [loaded? #(not (zero? (.-width (% @graphics))))]
+    (reduce #(and %1 %2) (map #(loaded? % @graphics) (keys @graphics)))))
 
 (defn draw-tile
   ([img [x y] rot]

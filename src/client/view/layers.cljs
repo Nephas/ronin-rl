@@ -5,7 +5,7 @@
             [client.view.layer.entity :refer [render-entities!]]
             [client.view.layer.gui :refer [render-gui!]]
             [client.view.layer.highlight :refer [render-highlights!]]
-            [client.view.graphics :refer [TILES SCREENSIZE SCREENCENTER ANGLES graphics draw-tile tiles-loaded?]]))
+            [client.view.graphics :refer [SCREENSIZE SCREENCENTER ANGLES graphics draw-tile tiles-loaded?]]))
 
 (def LAYERS [:floor :entities :gui :highlight])
 

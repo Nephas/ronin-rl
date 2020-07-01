@@ -10,6 +10,7 @@
 
 (defn setup []
   (println "initialising game:" r/game-id "as" r/player-id)
+  (q/frame-rate 20)
   (q/image-mode :center)
   (q/ellipse-mode :corner)
   (q/rect-mode :corner)

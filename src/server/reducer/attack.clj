@@ -22,8 +22,9 @@
   (let [pos (get-in state [:positions id])
         facing (get-in state [:facing id])
         stance (get-in state [:stance id])
-        base-targets (project-template pos (:base TEMPLATE) facing)
-        stance-targets (project-template pos (get TEMPLATE stance) facing)]
+        weapon (get-in state [:weapon id])
+        base-targets (project-template pos weapon :base facing)
+        stance-targets (project-template pos weapon stance facing)]
     (-> state
         (damage-area base-targets 1)
         (damage-area stance-targets 1))))

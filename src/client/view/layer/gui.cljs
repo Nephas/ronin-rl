@@ -1,6 +1,6 @@
 (ns client.view.layer.gui
   (:require [quil.core :as q]
-            [client.view.graphics :refer [TILES SCREENSIZE SCREENCENTER ANGLES graphics draw-tile]]))
+            [client.view.graphics :refer [graphics draw-tile]]))
 
 
 (defn player-info [state pid [x y]]

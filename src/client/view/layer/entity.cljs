@@ -1,6 +1,6 @@
 (ns client.view.layer.entity
   (:require [quil.core :as q]
-            [client.view.graphics :refer [TILES SCREENSIZE SCREENCENTER ANGLES graphics draw-tile]]))
+            [client.view.graphics :refer [ANGLES graphics draw-tile]]))
 
 
 (defn draw-entity [state id]

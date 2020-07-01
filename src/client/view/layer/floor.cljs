@@ -1,6 +1,7 @@
 (ns client.view.layer.floor
   (:require [quil.core :as q]
-            [client.view.graphics :refer [TILES SCREENSIZE SCREENCENTER ANGLES graphics draw-tile]]))
+            [client.view.graphics :refer [ANGLES graphics draw-tile]]
+            [lib.map :refer [TILES]]))
 
 (defn draw-floor-tile [pos]
   (let [i (mod (hash pos) 4)

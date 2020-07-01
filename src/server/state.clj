@@ -20,6 +20,8 @@
 
                          :stance    {1 :straight 2 :straight}
 
+                         :weapon    {1 :katana 2 :yari}
+
                          :facing    {1 :down 2 :up}
 
                          :drawable  {1  :player_1
