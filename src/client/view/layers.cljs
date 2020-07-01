@@ -5,9 +5,10 @@
             [client.view.layer.entity :refer [render-entities!]]
             [client.view.layer.gui :refer [render-gui!]]
             [client.view.layer.highlight :refer [render-highlights!]]
+            [client.view.layer.weapon :refer [render-weapons!]]
             [client.view.graphics :refer [SCREENSIZE SCREENCENTER ANGLES graphics draw-tile tiles-loaded?]]))
 
-(def LAYERS [:floor :entities :gui :highlight])
+(def LAYERS [:floor :weapons :entities :gui :highlight])
 
 (def layers (atom {}))
 
@@ -24,6 +25,7 @@
     (if (and (some? new-state) (tiles-loaded?))
       (do (reset! remote-state nil)
           (render-floor! new-state (:floor @layers))
+          (render-weapons! new-state (:weapons @layers))
           (render-entities! new-state (:entities @layers))
           (render-highlights! new-state (:highlight @layers))
           (render-gui! new-state (:gui @layers))
